@@ -1,0 +1,15 @@
+.row {
+    display: flex;
+    justify-content: space-evenly;
+    width: 16rem;
+    border: 1px solid blue;
+}
+
+.peg {
+    width: 2rem;
+    height: 2rem;
+    background-color: black;
+    border: 1px solid gold;
+    border-radius : 50%;
+}
+
