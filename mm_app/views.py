@@ -27,11 +27,14 @@ def guess():
     secret_peg = secret.copy()
     result = []
 
+    if(len(secret) != 4) :
+        print(f'corrupt secret master array length = {len(secret)}')
+
     if(len(secret_peg) != 4) :
-        print(f'corupt secret_peg array length = {len(secret_peg)}')
+        print(f'corrupt secret_peg copy array length = {len(secret_peg)}')
 
     if(len(peg) != 4) :
-        print(f'corupt posted peg array length = {len(peg)}')
+        print(f'corrupt posted peg array length = {len(peg)}')
 
     
     for i in range(len(peg)):
