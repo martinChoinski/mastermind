@@ -8,40 +8,38 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css')}}" />
 </head>
 <body>
-    <h1>Mastermind Py</h1>
-    <div class="board"> 
-        <form action="{{ url_for('guess') }}" method="post">>
+    <div class="container"> 
+        <header>
+            <h1>Mastermind Py</h1>
+            <div class="swatch"></div>
+        </header>
+        <hr>
+        <p>to change a Peg color : pick and click.  then : click Guess.</p>
+        <form id="guess" action="{{ url_for('guess') }}" method="post">
             <div class="row">
-                <div class="peg"></div>
-                <div class="peg"></div>
-                <div class="peg"></div>
-                <div class="peg"></div>
-                <button type="submit">Guess</button>
+                <div class="pegs">
+                    <div class="peg"></div>
+                    <div class="peg"></div>
+                    <div class="peg"></div>
+                    <div class="peg"></div>
+                </div>
+                <button id="guess-btn" type="submit">Guess</button>
+                <button id="replay-btn" type="button">New Game</button>
             </div>
+            <h2 id="game-msg"></h2>
         </form>
+        <hr>
+        <div class="board"></div>
+        <footer>
+            <div><small class="copyright">&copy; 2020 🖖 logic friendly 🖖</small></div>
+            <div><small class="credits">Photo by Mathew Schwartz on Unsplash</small></div>
+        </footer>
     </div>       
-    
+
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous">
     </script>
-    <script>
-        const colors = [
-            "rgb(255, 17, 17)",
-            "rgb(17, 255, 17)",
-            "rgb(17, 17, 255)",
-            "rgb(17, 255, 255)",
-            "rgb(255, 17, 255)",
-            "rgb(255, 255, 17)"];
-        
-        $(".peg").on("click", function() {
-            let color = $( this ).css( "background-color" );
-            let colorIndex = colors.findIndex((rgb) => rgb == color);
-            colorIndex++;
-            if(colorIndex >= colors.length) colorIndex = 0;
-            $( this ).css( "background-color", colors[colorIndex]);
-        });
-
-    </script>
+    <script src="{{ url_for('static', filename='mm.js')}}" ></script>
 </body>
 </html>
