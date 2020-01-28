@@ -1,0 +1,1 @@
+web: gunicorn mm_app.app:app
