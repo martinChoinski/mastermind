@@ -3,7 +3,9 @@ from flask import Flask, render_template, redirect, request
 from random import randint
 from . import app
 
-secret = []
+#use unique game_id and dict to make var session safe 
+game_id = 0 
+games = {}
 
 @app.route("/")
 def home():
@@ -13,42 +15,55 @@ def home():
 def start():
     n_pegs = int(request.form["number_of_pegs"])
     n_colors = int(request.form["number_of_colors"])
-    
-    secret.clear()
+    global  game_id
+    game_id += 3     
+    secret = []
     for i in range(n_pegs):
         n = randint(0, n_colors-1)
         secret.append(n)
+    
+    games[game_id] = secret
 
-    return f'secret colors = {secret}'
+    return json.dumps(game_id)
+
+@app.route("/end", methods=['POST'])
+def end():
+    remove_id = int(request.form["game_id"])
+    del games[remove_id]
+
+    return json.dumps(remove_id)
+
+@app.route("/check", methods=['POST'])
+def check():
+    check_id = int(request.form["game_id"])
+    return f'secret colors = {games[check_id]}'
 
 @app.route("/guess", methods=['POST'])
 def guess():
     peg = json.loads(request.form["pegs"])
-    secret_peg = secret.copy()
+    post_id = int(request.form["game_id"])
+    secret = games[post_id].copy()
     result = []
 
     if(len(secret) != 4) :
         print(f'corrupt secret master array length = {len(secret)}')
-
-    if(len(secret_peg) != 4) :
-        print(f'corrupt secret_peg copy array length = {len(secret_peg)}')
 
     if(len(peg) != 4) :
         print(f'corrupt posted peg array length = {len(peg)}')
 
     
     for i in range(len(peg)):
-        if peg[i] == secret_peg[i] :
+        if peg[i] == secret[i] :
             result.append(1)
             peg[i] = -1
-            secret_peg[i] = -2
+            secret[i] = -2
 
     for i in range(len(peg)):
-        for j in range(len(secret_peg)):
-            if peg[i] == secret_peg[j] :
+        for j in range(len(secret)):
+            if peg[i] == secret[j] :
                 result.append(0)
                 peg[i] = -1
-                secret_peg[j] = -2
+                secret[j] = -2
                 break
 
     return json.dumps(result)

@@ -3,6 +3,7 @@ const max_guess_count = 10;
 const pegs = []; //current set of pegs colors index
 let   guess_count = 0;
 let   result = [];
+let   game_id;
 
 //set these as desired
 const colors = [
@@ -22,7 +23,14 @@ function start_game(number_of_pegs, number_of_colors) {
     };
 
     $.post("/start", start, (data) => {
-        //console.log(`start_game = [${data}]`);
+        game_id = JSON.parse(data);
+        console.log(`started game[${game_id}]`);
+    });
+}
+
+function check() {
+    $.post("/check", {game_id : game_id}, (data) => {
+        console.log(`check = [${data}]`);
     });
 }
 
@@ -48,6 +56,9 @@ function end_game() {
     $("#guess-btn").hide(100);
     $("#guess .pegs").hide(100);
     $("#replay-btn").slideDown(400);
+    $.post("/end", {game_id : game_id}, (data) => {
+        console.log(`game[${data}] was removed`);
+    });
 }
 
 function new_game() {
@@ -97,7 +108,7 @@ $("#guess .peg").on("click", function() {
 $("#guess").on("submit", function(e) {
     e.preventDefault();
     let guessed =`<div class="guess-count">${++guess_count}</div>`; 
-    $.post("/guess",{ pegs: JSON.stringify(pegs) }, (data) => {
+    $.post("/guess",{ game_id : game_id, pegs: JSON.stringify(pegs) }, (data) => {
         result = JSON.parse(data);
         //console.log(result);
         let match = $('<div class="matches"></div>');
@@ -114,6 +125,7 @@ $("#guess").on("submit", function(e) {
         guess.prependTo(".board").hide().slideDown(600);
 
         gameMessage();
+        check();
     });
 });
 
