@@ -36,7 +36,7 @@ def end():
 @app.route("/check", methods=['POST'])
 def check():
     check_id = int(request.form["game_id"])
-    return f'secret colors = {games[check_id]}'
+    return f'game = {check_id}; secret colors = {games[check_id]}'
 
 @app.route("/guess", methods=['POST'])
 def guess():
