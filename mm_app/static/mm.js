@@ -107,26 +107,29 @@ $("#guess .peg").on("click", function() {
 
 $("#guess").on("submit", function(e) {
     e.preventDefault();
-    let guessed =`<div class="guess-count">${++guess_count}</div>`; 
-    $.post("/guess",{ game_id : game_id, pegs: JSON.stringify(pegs) }, (data) => {
-        result = JSON.parse(data);
-        //console.log(result);
-        let match = $('<div class="matches"></div>');
-        let guess = $("#guess .pegs").clone().prepend(guessed);;
-        for(r of result) {
-            if(r==1) {
-                $(`<div class="exact-match"></div>`).appendTo(match);
-            } else if(r==0) {
-                $(`<div class="color-match"></div>`).appendTo(match);
+    let guessed =`<div class="guess-count">${++guess_count}</div>`;
+    if(guess_count <= max_guess_count) {
+        $.post("/guess",{ game_id : game_id, pegs: JSON.stringify(pegs) }, (data) => {
+            result = JSON.parse(data);
+            //console.log(result);
+            let match = $('<div class="matches"></div>');
+            let guess = $("#guess .pegs").clone().prepend(guessed);;
+            for(r of result) {
+                if(r==1) {
+                    $(`<div class="exact-match"></div>`).appendTo(match);
+                } else if(r==0) {
+                    $(`<div class="color-match"></div>`).appendTo(match);
+                }
             }
-        }
-        $("#guess-btn").fadeOut(100).fadeIn(100);
-        match.appendTo(guess);
-        guess.prependTo(".board").hide().slideDown(600);
+            $("#guess-btn").fadeOut(100).fadeIn(100);
+            match.appendTo(guess);
+            guess.prependTo(".board").hide().slideDown(600);
+    
+            gameMessage();
+            check();
+        });
+    }
 
-        gameMessage();
-        check();
-    });
 });
 
 $("#replay-btn").on("click", function() {

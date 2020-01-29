@@ -36,7 +36,11 @@ def end():
 @app.route("/check", methods=['POST'])
 def check():
     check_id = int(request.form["game_id"])
-    return f'game = {check_id}; secret colors = {games[check_id]}'
+    if(check_id in games) :
+        return f'game = {check_id}; secret colors = {games[check_id]}'
+    else :
+        return f'game[{check_id}] not in dictionary'
+
 
 @app.route("/guess", methods=['POST'])
 def guess():
@@ -51,7 +55,6 @@ def guess():
     if(len(peg) != 4) :
         print(f'corrupt posted peg array length = {len(peg)}')
 
-    
     for i in range(len(peg)):
         if peg[i] == secret[i] :
             result.append(1)
