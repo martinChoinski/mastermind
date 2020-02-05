@@ -21,9 +21,8 @@ function start_game(number_of_pegs, number_of_colors) {
         console.log(`status = [${status}]`);
     })
     .fail( (data, status) => {
-        game_id = JSON.parse(data);
-        console.log(`fail - started game[${game_id}]`);
-        console.log(`fail - status = [${status}]`);
+        console.log(`fail - start_game: data[${data}]`);
+        console.log(`fail - start_game: status = [${status}]`);
     });
 }
 
@@ -56,9 +55,8 @@ function end_game() {
         console.log(`status = [${status}]`);
     })
     .fail( (data, status) => {
-        game_id = JSON.parse(data);
-        console.log(`fail - game[${game_id}] was removed`);
-        console.log(`fail - status = [${status}]`);
+        console.log(`fail - end_game: data[${data}]`);
+        console.log(`fail - end_game: status = [${status}]`);
     });
 }
 
@@ -148,10 +146,9 @@ $("#guess").on("submit", function(e) {
             gameMessage();
         })
         .fail( (data, status) => {
-            result = JSON.parse(data);
-            console.log(`fail - result = [${result}]`);
-            console.log(`fail - status = [${status}]`);
-            --guess_count; //reverse game post
+            console.log(`fail - guess: data[${data}]`);
+            console.log(`fail - guess: status = [${status}]`);
+            --guess_count; //reverse guess_count post
         });
     }
 
