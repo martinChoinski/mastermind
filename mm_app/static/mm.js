@@ -148,7 +148,7 @@ $("#guess").on("submit", function(e) {
         .fail( (data, status) => {
             console.log(`fail - guess: status = [${status}]`);
             console.log(`fail - guess: data[${data}]`);
-            console.log('data');
+            console.log(data);
             --guess_count; //reverse guess_count post
         });
     }
