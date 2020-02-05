@@ -48,7 +48,7 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 18rem;
+    width: 32rem;
     border: 1px dashed red;
     margin: 1rem;
     margin-left: 0;

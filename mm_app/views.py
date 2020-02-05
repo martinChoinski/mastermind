@@ -1,10 +1,12 @@
+#print("run views.py")
 import json
 from flask import Flask, render_template, redirect, request
 from random import randint
 from . import app
 
+
 #use unique game_id and dict to make var session safe 
-game_id = 0 
+game_id = 0
 games = {}
 
 @app.route("/")
@@ -15,7 +17,7 @@ def home():
 def start():
     n_pegs = int(request.form["number_of_pegs"])
     n_colors = int(request.form["number_of_colors"])
-    global  game_id
+    global game_id
     game_id += 3     
     secret = []
     for i in range(n_pegs):
@@ -29,17 +31,10 @@ def start():
 @app.route("/end", methods=['POST'])
 def end():
     remove_id = int(request.form["game_id"])
-    del games[remove_id]
+    if(remove_id in games) :  
+        del games[remove_id]
 
     return json.dumps(remove_id)
-
-@app.route("/check", methods=['POST'])
-def check():
-    check_id = int(request.form["game_id"])
-    if(check_id in games) :
-        return f'game = {check_id}; secret colors = {games[check_id]}'
-    else :
-        return f'game[{check_id}] not in dictionary'
 
 
 @app.route("/guess", methods=['POST'])

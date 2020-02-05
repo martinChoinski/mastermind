@@ -1,20 +1,12 @@
 
-const max_guess_count = 10;
-const pegs = []; //current set of pegs colors index
+const max_guess_count = 10;   //allowable turns to solve mystery pegs
 let   guess_count = 0;
-let   result = [];
-let   game_id;
+const pegs = [];              //current guess pegs    
+let   result = [];            //resultant match from guess  
+let   game_id;                //game being played  
 
-//set these as desired
-const colors = [
-    "rgb(255, 32, 32)",
-    "rgb(240, 160, 16)",
-    "rgb(240, 240, 32)",
-    "rgb(128, 255, 32)",
-    "rgb(32, 255, 255)",
-    "rgb(32, 32, 255)",
-    "rgb(255, 32, 255)"
-    ];
+const max_colors = 11;        //number of color pegs to choose from
+const colors = [];
 
 function start_game(number_of_pegs, number_of_colors) {
     const start = {
@@ -22,15 +14,16 @@ function start_game(number_of_pegs, number_of_colors) {
         number_of_colors : number_of_colors
     };
 
-    $.post("/start", start, (data) => {
+    $.post('/start', start)
+    .done( (data, status) => {
         game_id = JSON.parse(data);
         console.log(`started game[${game_id}]`);
-    });
-}
-
-function check() {
-    $.post("/check", {game_id : game_id}, (data) => {
-        console.log(`check = [${data}]`);
+        console.log(`status = [${status}]`);
+    })
+    .fail( (data, status) => {
+        game_id = JSON.parse(data);
+        console.log(`fail - started game[${game_id}]`);
+        console.log(`fail - status = [${status}]`);
     });
 }
 
@@ -56,8 +49,16 @@ function end_game() {
     $("#guess-btn").hide(100);
     $("#guess .pegs").hide(100);
     $("#replay-btn").slideDown(400);
-    $.post("/end", {game_id : game_id}, (data) => {
-        console.log(`game[${data}] was removed`);
+    $.post("/end", {game_id : game_id})
+    .done( (data, status) => {
+        game_id = JSON.parse(data);
+        console.log(`game[${game_id}] was removed`);
+        console.log(`status = [${status}]`);
+    })
+    .fail( (data, status) => {
+        game_id = JSON.parse(data);
+        console.log(`fail - game[${game_id}] was removed`);
+        console.log(`fail - status = [${status}]`);
     });
 }
 
@@ -78,13 +79,29 @@ function new_game() {
     gameMessage();
 }
 
+
+
 function init() {
+    let h = Math.floor(Math.random()*10);
+    let s = Math.floor(Math.random()*25)+75;
+    let l = Math.floor(Math.random()*25)+50;
+    let a = (Math.floor(Math.random()*50)+50)/100; //.50 - .99
+    const step = Math.floor(360 / max_colors);
+    for(let i=0; i < max_colors; i++) {
+        colors.push(`hsla(${h},${s}%,${l}%,${a})`);
+        h = (h + step) % 361;
+        s = Math.floor(Math.random()*25)+75;
+        l = Math.floor(Math.random()*25)+50;
+        a = (Math.floor(Math.random()*50)+50)/100; 
+    }
+
     //show current color set in header
     for(color of colors) {
         $('<div class="peg"></div>')
         .css( "background-color", color)
         .appendTo(".swatch");
     }
+
     //hide replay button
     $("#replay-btn").hide();
     
@@ -109,8 +126,11 @@ $("#guess").on("submit", function(e) {
     e.preventDefault();
     let guessed =`<div class="guess-count">${++guess_count}</div>`;
     if(guess_count <= max_guess_count) {
-        $.post("/guess",{ game_id : game_id, pegs: JSON.stringify(pegs) }, (data) => {
+        $.post("/guess",{ game_id : game_id, pegs: JSON.stringify(pegs) }) 
+        .done( (data, status) => {
             result = JSON.parse(data);
+            console.log(`result = [${result}]`);
+            console.log(`status = [${status}]`);
             //console.log(result);
             let match = $('<div class="matches"></div>');
             let guess = $("#guess .pegs").clone().prepend(guessed);;
@@ -126,7 +146,12 @@ $("#guess").on("submit", function(e) {
             guess.prependTo(".board").hide().slideDown(600);
     
             gameMessage();
-            check();
+        })
+        .fail( (data, status) => {
+            result = JSON.parse(data);
+            console.log(`fail - result = [${result}]`);
+            console.log(`fail - status = [${status}]`);
+            --guess_count; //reverse game post
         });
     }
 
@@ -140,6 +165,3 @@ $("#replay-btn").on("click", function() {
     new_game();
 });
 
-$(document).on("resize",function(e) {
-    console.log(`size = [${$(this).width()},${$(this).height()}]`)
-}); 
