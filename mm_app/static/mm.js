@@ -71,6 +71,7 @@ function new_game() {
         let colorIndex = Math.floor(Math.random()*colors.length);
         pegs.push(colorIndex);
         $( this ).css( "background-color", colors[colorIndex]);
+        $( this ).find(".peg-symbol").text(colorIndex+1);
     });
 
     start_game(pegs.length, colors.length);
@@ -94,8 +95,9 @@ function init() {
     }
 
     //show current color set in header
+    let i = 1;
     for(color of colors) {
-        $('<div class="peg"></div>')
+        $(`<div class="peg"><span class="peg-symbol">${i++}</span></div>`)
         .css( "background-color", color)
         .appendTo(".swatch");
     }
@@ -118,6 +120,8 @@ $("#guess .peg").on("click", function() {
     pegs[index] = colorIndex;
     
     $( this ).css( "background-color", colors[colorIndex]);
+    $( this ).find(".peg-symbol").text(colorIndex+1);
+
 });
 
 $("#guess").on("submit", function(e) {

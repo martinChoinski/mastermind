@@ -1,13 +1,9 @@
-#print("run views.py")
 import json
 from flask import Flask, render_template, redirect, request
 from random import randint
 from . import app
+from .db import new_game, get_game, end_game
 
-
-#use unique game_id and dict to make var session safe 
-game_id = 0
-games = {}
 
 @app.route("/")
 def home():
@@ -17,38 +13,31 @@ def home():
 def start():
     n_pegs = int(request.form["number_of_pegs"])
     n_colors = int(request.form["number_of_colors"])
-    global game_id
-    game_id += 3     
+
     secret = []
     for i in range(n_pegs):
         n = randint(0, n_colors-1)
         secret.append(n)
-    
-    games[game_id] = secret
+
+    game_id = new_game(secret,request.remote_addr)
 
     return json.dumps(game_id)
 
 @app.route("/end", methods=['POST'])
 def end():
-    remove_id = int(request.form["game_id"])
-    if(remove_id in games) :  
-        del games[remove_id]
+    game_id = int(request.form["game_id"])
+    end_game(game_id)
 
-    return json.dumps(remove_id)
+    return json.dumps(game_id)
 
 
 @app.route("/guess", methods=['POST'])
 def guess():
     peg = json.loads(request.form["pegs"])
-    post_id = int(request.form["game_id"])
-    secret = games[post_id].copy()
+    game_id = int(request.form["game_id"])
+    # print(f'game_id = {game_id}')
+    secret = json.loads(get_game(game_id))
     result = []
-
-    if(len(secret) != 4) :
-        print(f'corrupt secret master array length = {len(secret)}')
-
-    if(len(peg) != 4) :
-        print(f'corrupt posted peg array length = {len(peg)}')
 
     for i in range(len(peg)):
         if peg[i] == secret[i] :

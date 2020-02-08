@@ -106,11 +106,21 @@ button {
 }
 
 .peg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 2rem;
     height: 2rem;
     background-color: transparent;
     border: 1px solid gold;
     border-radius : 50%;
+}
+
+.peg-symbol {
+    text-align: center;
+    width: 1rem;
+    height: 1rem;
+    color: rgba(32,32,32,.8); 
 }
 
 .row .peg {
